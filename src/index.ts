@@ -38,8 +38,8 @@ app.get("/api/kite/auth", async (req, res) => {
   try {
     console.log(req.query);
     const request_token = req.query.request_token as string;
-    const api_secret = "mjws2zn9x2bf30xvq7cuz7pqd0qxvswv";
-    const api_key = "wmdvpcvumovceox1";
+    const api_secret = "---your-api-secret---";
+    const api_key = "---your-api-key---";
 
     const kc = new KiteConnect({ api_key });
 
