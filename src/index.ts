@@ -34,22 +34,25 @@ app.use((req, res, next) => {
 });
 
 // Handle Kite auth
-app.get("/api/kite/auth", async (req, res) => {
+app.post("/api/kite/auth", async (req, res) => {
   try {
-    console.log(req.query);
-    const request_token = req.query.request_token as string;
-    const api_secret = "---your-api-secret---";
-    const api_key = "---your-api-key---";
+    // console.log(req.query);
+    // const request_token = req.query.request_token as string;
+    const api_secret = "mjws2zn9x2bf30xvq7cuz7pqd0qxvswv";
+    const api_key = "wmdvpcvumovceox1";
+    const access_token = req.body.access_token;
+    const instrumentTokenList = req.body.instrumentTokenList;
+    console.log('Access Token:', access_token);
 
-    const kc = new KiteConnect({ api_key });
+    // const kc = new KiteConnect({ api_key });
 
-    const sessionResp = await kc.generateSession(request_token, api_secret);
-    console.log("Session response:", sessionResp);
-    const access_token = sessionResp.access_token;
+    // const sessionResp = await kc.generateSession(request_token, api_secret);
+    // console.log("Session response:", sessionResp);
+    // const access_token = sessionResp.access_token;
 
-    await redisClient.set(`KITE_CONNECT_access_token`, access_token);
-
-    initiateMarketFeed(api_key, access_token);
+    // await redisClient.set(`KITE_CONNECT_access_token`, access_token);
+    
+    initiateMarketFeed(api_key, access_token, instrumentTokenList);
 
     res.send('Kite Authentication Successful');
   } catch (err) {
@@ -58,7 +61,7 @@ app.get("/api/kite/auth", async (req, res) => {
   }
 });
 
-function initiateMarketFeed(api_key: string, access_token: string) {
+function initiateMarketFeed(api_key: string, access_token: string, instrumentTokenList: any) {
   const ticker = new KiteTicker({
     api_key,
     access_token
@@ -79,13 +82,14 @@ function initiateMarketFeed(api_key: string, access_token: string) {
 
   function onTicks(ticks: any) {
     // publish data to marketTkis channel in redis
+    console.log("Ticks: ", ticks);
     redisClient.publish("marketTicks", JSON.stringify(ticks));
 
     
   }
 
   function subscribe() {
-    const items = [738561, 415745, 779521];
+    const items = [738561, 415745, 779521, ...instrumentTokenList];
     ticker.subscribe(items);
     ticker.setMode(ticker.modeLTP, items);
   }
