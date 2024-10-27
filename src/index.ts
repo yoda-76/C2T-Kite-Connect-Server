@@ -38,8 +38,8 @@ app.post("/api/kite/auth", async (req, res) => {
   try {
     // console.log(req.query);
     // const request_token = req.query.request_token as string;
-    const api_secret = "mjws2zn9x2bf30xvq7cuz7pqd0qxvswv";
-    const api_key = "wmdvpcvumovceox1";
+    const api_secret = process.env.KITE_API_SECRET;
+    const api_key = process.env.KITE_API_KEY;
     const access_token = req.body.access_token;
     const instrumentTokenList = req.body.instrumentTokenList;
     console.log('Access Token:', access_token);
