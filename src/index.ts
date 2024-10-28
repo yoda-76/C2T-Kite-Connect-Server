@@ -2,8 +2,7 @@ import express from "express";
 import Redis from "ioredis";
 import cookieParser from "cookie-parser";
 import { createServer } from "node:http";
-import { Server as WebSocketServer } from "socket.io";
-var { KiteTicker, KiteConnect } = require("kiteconnect");
+var { KiteTicker } = require("kiteconnect");
 
 const port = process.env.PORT || 3001;
 const app = express();
@@ -38,8 +37,7 @@ app.post("/api/kite/auth", async (req, res) => {
   try {
     // console.log(req.query);
     // const request_token = req.query.request_token as string;
-    const api_secret = process.env.KITE_API_SECRET;
-    const api_key = process.env.KITE_API_KEY;
+    const api_key = req.body.key;
     const access_token = req.body.access_token;
     const instrumentTokenList = req.body.instrumentTokenList;
     console.log('Access Token:', access_token);
@@ -62,10 +60,12 @@ app.post("/api/kite/auth", async (req, res) => {
 });
 
 function initiateMarketFeed(api_key: string, access_token: string, instrumentTokenList: any) {
+  console.log(api_key, access_token)
   const ticker = new KiteTicker({
     api_key,
     access_token
   });
+  console.log("ticker initialised")
 
   ticker.autoReconnect(true, 10, 5);
   ticker.connect();
