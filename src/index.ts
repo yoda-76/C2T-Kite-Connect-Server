@@ -49,8 +49,17 @@ app.post("/api/kite/auth", async (req, res) => {
     // const access_token = sessionResp.access_token;
 
     // await redisClient.set(`KITE_CONNECT_access_token`, access_token);
+
     
-    initiateMarketFeed(api_key, access_token, instrumentTokenList);
+    const chunkSize = 3000;
+    const result = [];
+    for (let i = 0; i < instrumentTokenList.length; i += chunkSize) {
+      result.push(instrumentTokenList.slice(i, i + chunkSize));
+    }
+    result.forEach(async (chunk: any) => {
+      initiateMarketFeed(api_key, access_token, chunk);
+    })
+    // initiateMarketFeed(api_key, access_token, instrumentTokenList);
 
     res.send('Kite Authentication Successful');
   } catch (err) {
