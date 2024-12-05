@@ -91,7 +91,7 @@ function initiateMarketFeed(api_key: string, access_token: string, instrumentTok
 
   function onTicks(ticks: any) {
     // publish data to marketTkis channel in redis
-    console.log("Ticks: ", ticks);
+    // console.log("Ticks: ", ticks);
     redisClient.publish("marketTicks", JSON.stringify(ticks));
 
     
